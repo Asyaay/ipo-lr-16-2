@@ -8,7 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-local-fallback-key-123')
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-# === ЗАДАНИЕ 2: НАСТРОЙКА ALLOWED_HOSTS С РАЗРЕШЕНИЕМ ЛЮБЫХ ПОДДОМЕНОВ ===
+# === ЗАДАНИЕ 2: РАЗРЕШЕНИЕ ЗАПУСКА НА ЛЮБЫХ ПОДДОМЕНАХ RAILWAY И LOCALHOST ===
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.up.railway.app', '*']
 
 INSTALLED_APPS = [
@@ -19,7 +19,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'yoga',  # Имя твоего основного установленного приложения Студии Йоги
+    'yoga',  # Твое установленное приложение Студии Йоги
 ]
 
 # === ЗАДАНИЕ 2: ПОДКЛЮЧЕНИЕ WHITENOISEMIDDLEWARE СРАЗУ ПОСЛЕ SECURITY ===
@@ -34,7 +34,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# Исправленный чистый путь маршрутизации к твоей папке yoga
 ROOT_URLCONF = 'yoga.urls'
 
 TEMPLATES = [
@@ -53,7 +52,6 @@ TEMPLATES = [
     },
 ]
 
-# Исправленная точка входа WSGI-приложения
 WSGI_APPLICATION = 'yoga.wsgi.application'
 # === ЗАДАНИЕ 2 И ЗАДАНИЕ 4: КОНФИГУРАЦИЯ СУБД POSTGRESQL ЧЕРЕЗ DJ_DATABASE_URL ===
 DATABASES = {

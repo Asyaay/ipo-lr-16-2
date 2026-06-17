@@ -1,2 +1,2 @@
-# === ЗАДАНИЕ 3: КОМАНДА ЗАПУСКА PRODUCTION-СЕРВЕРА GUNICORN ДЛЯ СТУДИИ ЙОГИ ===
-web: gunicorn yogaaa.wsgi:application
+# === ЗАДАНИЕ 3: ПРЯМАЯ БЕЗОТКАЗНАЯ КОМАНДА ЗАПУСКА СЕРВЕРА Django НА ПОРТУ RAILWAY ===
+web: python manage.py runserver 0.0.0.0:$PORT
