@@ -1,0 +1,31 @@
+body {
+    background-color: #f4f7f5 !important;
+}
+
+.bg-yoga-green {
+    background-color: #1b4332 !important;
+}
+
+.text-yoga-green {
+    color: #1b4332 !important;
+}
+
+.btn-yoga {
+    background-color: #2d6a4f !important;
+    color: #ffffff !important;
+    border: none !important;
+}
+
+.btn-yoga:hover {
+    background-color: #1b4332 !important;
+}
+
+.card-yoga {
+    border-radius: 15px !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.card-yoga:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(27, 67, 50, 0.1) !important;
+}

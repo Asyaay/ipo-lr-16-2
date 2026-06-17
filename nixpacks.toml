@@ -1,0 +1,10 @@
+# === ЗАДАНИЕ 4: АВТОМАТИЧЕСКИЕ СЕРВЕРНЫЕ ФАЗЫ СБОРКИ ПРОЕКТА ЙОГИ ===
+
+[phases.setup]
+nixPkgs = ["python310"]
+
+[phases.build]
+cmds = [
+    "python manage.py collectstatic --noinput", # Автоматический сборщик статики продакшна
+    "python manage.py migrate --noinput"        # Автоматический запуск серверных миграций СУБД
+]
