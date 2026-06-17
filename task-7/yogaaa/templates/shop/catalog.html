@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Каталог товаров — ProYoga{% endblock %}
+
+{% block content %}
+{% csrf_token %}
+<div id="alert-container" style="position: fixed; top: 20px; right: 20px; z-index: 1050; max-width: 400px;"></div>
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="card shadow-sm border-0 p-3 bg-white rounded mb-4">
+            <h5 class="fw-bold mb-3 text-dark">Фильтры</h5>
+            <form method="GET" action="/catalog/">
+                <div class="mb-3">
+                    <label class="form-label text-muted small fw-bold">Поиск по названию:</label>
+                    <input type="text" name="q" value="{{ request.GET.q }}" class="form-control" placeholder="Введите название...">
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label text-muted small fw-bold">Категория:</label>
+                    <select name="category" class="form-select">
+                        <option value="">Все категории</option>
+                        {% for category in categories %}
+                            <option value="{{ category.id }}" {% if request.GET.category == category.id|stringformat:"s" %}selected{% endif %}>
+                                {{ category.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label text-muted small fw-bold">Производитель:</label>
+                    <select name="manufacturer" class="form-select">
+                        <option value="">Все производители</option>
+                        {% for manufacturer in manufacturers %}
+                            <option value="{{ manufacturer.id }}" {% if request.GET.manufacturer == manufacturer.id|stringformat:"s" %}selected{% endif %}>
+                                {{ manufacturer.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 fw-bold mb-2">Применить фильтры</button>
+                <a href="/catalog/" class="btn btn-outline-secondary w-100 btn-sm">Сбросить</a>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-md-9">
+        <h2 class="fw-bold text-dark mb-4">Каталог товаров ProYoga</h2>
+        
+        <div id="loading-spinner" class="text-center my-5">
+            <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                <span class="visually-hidden">Загрузка...</span>
+            </div>
+            <p class="text-muted mt-2">Загрузка товаров из API...</p>
+        </div>
+
+        <div id="products-container" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/main.js' %}"></script>
+{% endblock %}

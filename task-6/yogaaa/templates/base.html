@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ProYoga — Товары для практик{% endblock %}</title>
+    <link href="https://jsdelivr.net" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body style="display: flex; flex-direction: column; min-height: 100vh;">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-yoga-green shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold fs-4 d-flex align-items-center gap-2" href="/">
+                <span>🧘‍♀️</span> ProYoga Shop
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="navbar-nav me-auto">
+                    <a class="nav-link text-white-50" href="/">Главная</a>
+                    <a class="nav-link text-white-50" href="/catalog/">Каталог ковриков</a>
+                    <a class="nav-link text-white-50" href="/cart/">Корзина</a>
+                </div>
+                <div class="navbar-nav">
+                    {% if user.is_authenticated %}
+                        <span class="navbar-text me-3 text-white">Привет, {{ user.username }}!</span>
+                        <a class="btn btn-outline-light btn-sm px-3" href="/admin/logout/">Выйти</a>
+                    {% else %}
+                        <a class="btn btn-light btn-sm text-yoga-green fw-bold px-3" href="/admin/login/">Войти</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container my-5" style="flex: 1;">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="bg-yoga-green text-white text-center py-4 mt-auto border-top border-success">
+        <div class="container">
+            <p class="mb-1 fw-bold">🧘‍♀️ ProYoga — Твой проводник в мир гармонии и здоровья</p>
+            <p class="mb-0 text-white-50 small">Профессиональное оборудование для йоги, пилатеса и медитации. Все права защищены &copy; 2026</p>
+        </div>
+    </footer>
+
+    <script src="https://jsdelivr.net"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Главная — ProYoga Студия{% endblock %}
+{% block content %}
+<div class="p-5 mb-5 text-white rounded-5 shadow-lg border-0" style="background: linear-gradient(135deg, #1b4332 0%, #2d6a4f 100%); position: relative; overflow: hidden;">
+    <div style="position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: rgba(255,255,255,0.05); border-radius: 50%;"></div>
+    <div class="container-fluid py-4 position-relative" style="z-index: 2;">
+        <span class="badge bg-light text-yoga-green fw-bold px-3 py-2 text-uppercase tracking-wider mb-3">Премиум оборудование</span>
+        <h1 class="display-4 fw-black mb-3 text-white">Гармония твоего тела и разума</h1>
+        <p class="col-md-8 fs-5 text-white-50 mb-4" style="line-height: 1.7;">Профессиональные эко-коврики, опорные блоки из натуральной пробки и качественные аксессуары для безопасной и глубокой практики йоги и медитации.</p>
+        <a href="/catalog/" class="btn btn-light btn-lg text-yoga-green fw-bold px-5 py-3 rounded-pill shadow">Открыть каталог товаров</a>
+    </div>
+</div>
+<div class="row g-4">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+            <h5 class="mb-3 text-dark fw-bold border-bottom pb-2">🧘‍♂️ Направления</h5>
+            <div class="list-group list-group-flush">
+                {% for category in categories %}
+                    <a href="/catalog/?category={{ category.id }}" class="list-group-item list-group-item-action border-0 rounded-3 my-1 py-2 fw-medium text-secondary">
+                        ✨ {{ category.name }}
+                    </a>
+                {% empty %}
+                    <div class="list-group-item text-muted border-0">Категории наполняются...</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-9">
+        <h4 class="mb-4 text-dark fw-bold d-flex align-items-center gap-2">
+            <span>🔥</span> Популярно у мастеров
+        </h4>
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for product in products|slice:":6" %}
+                <div class="col">
+                    <div class="card h-100 shadow-sm border-0 card-yoga bg-white rounded-4 overflow-hidden">
+                        <div class="p-4 bg-light text-center border-bottom d-flex align-items-center justify-content-center" style="height: 140px; background: linear-gradient(180deg, #f4f7f5 0%, #e9ecef 100%) !important;">
+                            <span class="fs-1">🍃</span>
+                        </div>
+                        <div class="card-body d-flex flex-column p-4">
+                            <h5 class="card-title fw-bold text-dark mb-2">{{ product.name }}</h5>
+                            <p class="card-text text-muted flex-grow-1 mb-4" style="font-size: 13.5px; line-height: 1.6;">
+                                {{ product.description|truncatewords:10 }}
+                            </p>
+                            <div class="d-flex justify-content-between align-items-center mt-auto border-top pt-3 border-light">
+                                <span class="h5 mb-0 text-yoga-green fw-black">{{ product.price }} BYN</span>
+                                <a href="/catalog/{{ product.id }}/" class="btn btn-yoga btn-sm px-3 py-2 rounded-pill fw-bold">Смотреть</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12 text-center py-5 bg-white rounded-4 shadow-sm border border-light">
+                    <p class="lead text-muted mb-0">Новые товары ожидаются в ближайшее время.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

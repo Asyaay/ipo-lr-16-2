@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Личный кабинет — ProYoga</title>
+    <!-- Подключаем Bootstrap 5 для стилизации интерфейса по заданию -->
+    <link href="https://jsdelivr.net" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+    <!-- Верхнее навигационное меню сайта -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">🧘 ProYoga Студия</a>
+            <div class="navbar-nav">
+                <a class="nav-link" href="{% url 'home' %}">Главная</a>
+                <a class="nav-link active" href="{% url 'profile_page' %}">Личный кабинет</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container my-5">
+        <!-- Блок 3 задания: Обработка ошибок для неавторизованных пользователей -->
+        <div id="unauthorized-block" class="d-none text-center py-5 card shadow-sm">
+            <div class="card-body">
+                <h3 class="text-danger mb-3">Доступ ограничен</h3>
+                <p class="text-muted mb-4">Для просмотра личного кабинета и истории заказов необходимо авторизоваться в системе.</p>
+                <a href="{% url 'login' %}" class="btn btn-success btn-lg px-5">Войти в систему</a>
+            </div>
+        </div>
+        <!-- Основной контейнер личного кабинета (показывается только вошедшим пользователям) -->
+        <div id="profile-content" class="d-none row g-4">
+            
+            <!-- Блок 1 задания: Блок "Профиль" (отображение и редактирование) -->
+            <div class="col-md-5">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body p-4">
+                        <h4 class="card-title mb-4 text-primary">👤 Мой профиль</h4>
+                        <div id="profile-alert" class="alert d-none" role="alert"></div>
+                        
+                        <!-- Форма редактирования персональных данных (Fetch PATCH) -->
+                        <form id="profile-form">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Имя пользователя (Логин):</label>
+                                <input type="text" id="username" class="form-control bg-light" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Электронная почта (Email):</label>
+                                <input type="email" id="email" class="form-control bg-light" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">ФИО:</label>
+                                <input type="text" id="full_name" class="form-control" required placeholder="Введите ваше ФИО">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Номер телефона:</label>
+                                <input type="tel" id="phone" class="form-control" required placeholder="+375 (XX) XXX-XX-XX">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Адрес проживания:</label>
+                                <textarea id="address" class="form-control" rows="3" required placeholder="Город, улица, дом, квартира"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100 fw-bold">Сохранить изменения</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Блок 2 задания: Блок "Мои заказы" (Таблица и модальное окно деталей) -->
+            <div class="col-md-7">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body p-4">
+                        <h4 class="card-title mb-4 text-success">📦 История заказов</h4>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>№ Заказа</th>
+                                        <th>Дата оформления</th>
+                                        <th>Сумма (BYN)</th>
+                                        <th>Действие</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="orders-tbody">
+                                    <!-- Строки заказов будут генерироваться через JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- Модальное окно Bootstrap для вывода деталей заказа (Блок 2, пункт 2) -->
+    <div class="modal fade" id="orderModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-modal-title" id="modal-order-title">Детали заказа</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <ul id="modal-items-list" class="list-group list-group-flush mb-3">
+                        <!-- Элементы заказа с ценами добавятся через JS -->
+                    </ul>
+                    <div class="text-end fw-bold fs-5 text-success border-top pt-2">
+                        Итого: <span id="modal-total-cost">0.00</span> BYN
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Подключаем Bootstrap JS для работы модальных окон -->
+    <script src="https://jsdelivr.net"></script>
+
+    <script>
+        // Функция получения CSRF-токена из Cookie для отправки безопасных PATCH запросов в Django
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // При загрузке страницы запрашиваем данные профиля через Fetch API
+        document.addEventListener("DOMContentLoaded", function() {
+            fetch('/api/me/')
+                .then(response => {
+                    if (response.status === 403 || response.status === 401) {
+                        // Блок 3: Если пользователь не вошел — показываем блок ошибки
+                        document.getElementById('unauthorized-block').classList.remove('d-none');
+                        throw new Error('Unauthorized');
+                    }
+                    return response.json();
+                })
+                .then(profile => {
+                    // Если вошел — открываем личный кабинет и заполняем форму данными (Блок 1, п.1)
+                    document.getElementById('profile-content').classList.remove('d-none');
+                    document.getElementById('username').value = profile.username;
+                    document.getElementById('email').value = profile.email;
+                    document.getElementById('full_name').value = profile.full_name || '';
+                    document.getElementById('phone').value = profile.phone || '';
+                    document.getElementById('address').value = profile.address || '';
+                    
+                    // Сразу после профиля загружаем историю заказов этого пользователя
+                    loadUserOrders();
+                })
+                .catch(err => console.log("Проверка авторизации: ", err.message));
+        });
+
+        // Блок 1, пункт 2: Отправка формы редактирования через Fetch PATCH на /api/me/
+        document.getElementById('profile-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const alertBox = document.getElementById('profile-alert');
+            
+            const updatedData = {
+                full_name: document.getElementById('full_name').value,
+                phone: document.getElementById('phone').value,
+                address: document.getElementById('address').value
+            };
+
+            fetch('/api/me/', {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken') // передаем токен защиты Django
+                },
+                body: JSON.stringify(updatedData)
+            })
+            .then(res => {
+                alertBox.classList.remove('d-none', 'alert-success', 'alert-danger');
+                if (res.ok) {
+                    alertBox.classList.add('alert-success');
+                    alertBox.innerText = "✨ Профиль успешно обновлен!";
+                } else {
+                    alertBox.classList.add('alert-danger');
+                    alertBox.innerText = "❌ Ошибка при обновлении профиля.";
+                }
+            });
+        });
+
+        // Блок 2, пункт 1: Загрузка таблицы заказов через Fetch API на /api/orders/
+        function loadUserOrders() {
+            fetch('/api/orders/')
+                .then(res => res.json())
+                .then(orders => {
+                    const tbody = document.getElementById('orders-tbody');
+                    tbody.innerHTML = '';
+                    
+                    if (orders.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-3">У вас пока нет оформленных заказов.</td></tr>';
+                        return;
+                    }
+
+                    orders.forEach(order => {
+                        const date = new Date(order.created_at).toLocaleDateString('ru-RU');
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td class="fw-bold">#${order.id}</td>
+                            <td>${date}</td>
+                            <td class="text-success fw-bold">${order.total_cost}</td>
+                            <td>
+                                <!-- Блок 2, пункт 2: Кнопка "Подробнее" вызывает открытие модального окна -->
+                                <button class="btn btn-outline-success btn-sm fw-bold" onclick="showOrderDetails(${order.id})">Подробнее</button>
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                });
+        }
+
+        // Блок 2, пункт 2: Получение и вывод деталей конкретного заказа в модальное окно
+        function showOrderDetails(orderId) {
+            fetch(`/api/orders/${orderId}/`)
+                .then(res => res.json())
+                .then(order => {
+                    document.getElementById('modal-order-title').innerText = `Детали заказа №${order.id}`;
+                    document.getElementById('modal-total-cost').innerText = order.total_cost;
+                    
+                    const itemsList = document.getElementById('modal-items-list');
+                    itemsList.innerHTML = '';
+                    
+                    // По ТЗ выводим состав заказа. Так как в DRF возвращаются ID товаров, выводим общую информацию по позициям
+                    order.items.forEach(item => {
+                        const li = document.createElement('li');
+                        li.className = 'list-group-item d-flex justify-content-between align-items-center px-0';
+                        li.innerHTML = `
+                            <div>
+                                <span class="fw-bold text-dark">Услуга/Товар ID: ${item.product}</span>
+                                <div class="small text-muted">Количество: ${item.quantity} шт.</div>
+                            </div>
+                            <span class="badge bg-secondary rounded-pill">${item.price} BYN</span>
+                        `;
+                        itemsList.appendChild(li);
+                    });
+
+                    // Открываем модальное окно через Bootstrap API
+                    const myModal = new bootstrap.Modal(document.getElementById('orderModal'));
+                    myModal.show();
+                });
+        }
+    </script>
+</body>
+</html>
