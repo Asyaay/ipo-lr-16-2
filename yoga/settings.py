@@ -8,7 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-local-fallback-key-123')
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-# === ЗАДАНИЕ 2: НАСТРОЙКА ALLOWED_HOSTS С ВКЛЮЧЕНИЕМ ДОМЕНА *.up.railway.app ===
+# === ЗАДАНИЕ 2: НАСТРОЙКА ALLOWED_HOSTS С РАЗРЕШЕНИЕМ ЛЮБЫХ ПОДДОМЕНОВ ===
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.up.railway.app', '*']
 
 INSTALLED_APPS = [
@@ -19,7 +19,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'yogaaa',  # Твое основное рабочее приложение Студии Йоги
+    'yoga',  # Имя твоего основного установленного приложения Студии Йоги
 ]
 
 # === ЗАДАНИЕ 2: ПОДКЛЮЧЕНИЕ WHITENOISEMIDDLEWARE СРАЗУ ПОСЛЕ SECURITY ===
@@ -34,7 +34,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'yogaaa.urls'
+# Исправленный чистый путь маршрутизации к твоей папке yoga
+ROOT_URLCONF = 'yoga.urls'
 
 TEMPLATES = [
     {
@@ -52,7 +53,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'yogaaa.wsgi.application'
+# Исправленная точка входа WSGI-приложения
+WSGI_APPLICATION = 'yoga.wsgi.application'
 # === ЗАДАНИЕ 2 И ЗАДАНИЕ 4: КОНФИГУРАЦИЯ СУБД POSTGRESQL ЧЕРЕЗ DJ_DATABASE_URL ===
 DATABASES = {
     'default': dj_database_url.config(
