@@ -4,16 +4,12 @@ import dj_database_url  # === ЗАДАНИЕ 2: ИМПОРТ ПАРСЕРА СТ
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# =========================================================================
 # === ЗАДАНИЕ 2: ЧТЕНИЕ SECRET_KEY И DEBUG ИЗ СИСТЕМНЫХ ПЕРЕМЕННЫХ СРЕД ===
-# =========================================================================
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-local-fallback-key-123')
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-# =========================================================================
 # === ЗАДАНИЕ 2: НАСТРОЙКА ALLOWED_HOSTS С ВКЛЮЧЕНИЕМ ДОМЕНА *.up.railway.app ===
-# =========================================================================
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.up.railway.app']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.up.railway.app', '*']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -26,9 +22,7 @@ INSTALLED_APPS = [
     'yogaaa',  # Твое основное рабочее приложение Студии Йоги
 ]
 
-# =========================================================================
 # === ЗАДАНИЕ 2: ПОДКЛЮЧЕНИЕ WHITENOISEMIDDLEWARE СРАЗУ ПОСЛЕ SECURITY ===
-# =========================================================================
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',  # Сервер раздачи статических стилей в интернете
@@ -59,9 +53,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'yogaaa.wsgi.application'
-# =========================================================================
 # === ЗАДАНИЕ 2 И ЗАДАНИЕ 4: КОНФИГУРАЦИЯ СУБД POSTGRESQL ЧЕРЕЗ DJ_DATABASE_URL ===
-# =========================================================================
 DATABASES = {
     'default': dj_database_url.config(
         default=os.environ.get('DATABASE_URL', f"sqlite:///{os.path.join(BASE_DIR, 'db.sqlite3')}"),
@@ -81,14 +73,11 @@ TIME_ZONE = 'Europe/Minsk'
 USE_I18N = True
 USE_TZ = True
 
-# Конфигурация сборщика статики для корректной работы стилей сайта в интернете
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# =========================================================================
 # === ЗАДАНИЕ 2: УСТАНОВКА ФЛАГОВ БЕЗОПАСНОСТИ ДЛЯ КУКИ СЕССИЙ ПРИ DEBUG=FALSE ===
-# =========================================================================
 if not DEBUG:
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
