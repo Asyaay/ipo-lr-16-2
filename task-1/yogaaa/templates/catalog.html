@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Каталог — ProYoga</title>
+</head>
+<body style="font-family: sans-serif; margin: 20px;">
+
+    <h1>Каталог товаров ProYoga</h1>
+    <p><a href="/">🏠 На главную</a></p>
+    <hr>
+
+    <h2>🗂 Категории товаров</h2>
+    <ul>
+        {% if categories %}
+            {% for cat in categories %}
+                <li><strong>{{ cat.name }}</strong> — {{ cat.description|default:"Товары для йоги" }}</li>
+            {% endfor %}
+        {% else %}
+            <li>Категорий пока нет</li>
+        {% endif %}
+    </ul>
+
+    <h2>🏭 Наши Производители</h2>
+    <ul>
+        {% if manufacturers %}
+            {% for man in manufacturers %}
+                <li><strong>{{ man.name }}</strong> ({{ man.country }})</li>
+            {% endfor %}
+        {% else %}
+            <li>Производителей пока нет</li>
+        {% endif %}
+    </ul>
+
+    <h2>🛍 Список всех товаров</h2>
+    <ul>
+        {% if products %}
+            {% for product in products %}
+                <li style="margin-bottom: 10px;">
+                    <strong>{{ product.name }}</strong> <br>
+                    Цена: {{ product.price }} BYN | На складе: {{ product.stock }} шт. <br>
+                    Производитель: {{ product.manufacturer.name }} | Категория: {{ product.category.name }}
+                </li>
+            {% endfor %}
+        {% else %}
+            <li>Товаров пока нет</li>
+        {% endif %}
+    </ul>
+
+</body>
+</html>
